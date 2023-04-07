@@ -1,0 +1,5 @@
+----THESE STEPS WILL ONLY TAKE 2-3 MINUTES-----
+
+1) Create an account in oracle database with Username: "user1138" and password: "1138". Give the user proper permissions to create tables and create session.
+2) Run all the SQL code inside the SQL folder in your oracle database while logged in as the above account.
+3) To get proper view of the game, you will need to set your pc resolution as 1920x1080 and font size as 100%
