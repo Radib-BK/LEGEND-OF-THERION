@@ -10,13 +10,17 @@ import java.io.IOException;
 public class Old_man extends  Entity{
 
     public BufferedImage current_image;
+
+    public String state="not_active";
+
+    public String old_man_house= "closed";
     public int dialogue_delay=0;
     public Old_man(GamePanel gp) {
         super(gp);
-        setDialogue();
 
-        x=600;
-        y=650;
+
+        x=1355;
+        y=630;
         current_health=100;
         max_health=100;
         getEnemyImage();
@@ -26,20 +30,7 @@ public class Old_man extends  Entity{
 
     }
 
-    public void setDialogue()
-    {
-        dialogues[0]="Who are you, my child?";
-        dialogues[1]="[Tells his story]";
-        dialogues[2]="You story makes me sad...[A moment of silence]";
-        dialogues[3]="I used to be the greatest wizard. I have visited a lots\n of countries.  Once your father invited me to his \ncountry. What a beautiful country it was.";
-        dialogues[4]="You have such a great potential and I want to help you.";
-        dialogues[5]="I will give you my blessings and tell you the path of \nachieving the greatest power";
-        dialogues[6]="You can now shoot a special projectile with your hand.";
-        dialogues[7]="But that is not all. Go ahead along this path and you will \nSget a special mana that lets you transform into powerful form";
-        dialogues[8]="However, that is not all. Take the portal and it will take you to \nanother world where you can get more transformation abilities";
-        dialogues[9]="I hope one day you strong enough to beat the demon and get back your country";
 
-    }
 
     public void speak()
     {
@@ -57,8 +48,8 @@ public class Old_man extends  Entity{
     public void getEnemyImage() {
         try {
 
-            left0=ImageIO.read(getClass().getClassLoader().getResourceAsStream("NPC/Old_man/oldman_down_1.png"));
-            left1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("NPC/Old_man/oldman_left_1.png"));
+
+            left1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("NPC/Old_man/left.png"));
 
 
 
@@ -80,6 +71,6 @@ public class Old_man extends  Entity{
 
 
 
-            g2.drawImage(current_image, x, y, 80, 80, null);
+            g2.drawImage(left1, x, y, 69, 100, null);
     }
 }

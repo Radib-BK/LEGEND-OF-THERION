@@ -47,7 +47,7 @@ public class IceGolem extends Entity {
 
     public int hit_delay = 0, shoot_animation_pause=0;
 
-    int activity_delay=0;
+    int activity_delay=120;
 
     int bullet_original_y;
 

@@ -1,5 +1,6 @@
 drop table player;
 drop table saved_game;
+drop table upgrade_level;
 
 
 create table saved_game(
@@ -20,8 +21,52 @@ constraint player_pk primary key(saved_game_id, map),
 constraint player_savedgame_fk foreign key(saved_game_id) references saved_game(id)
 );
 
+create table upgrade_level(
+saved_game_id int, 
+map int,
+slot_zero int,slot_one int, 
+slot_two int, slot_three int,
+slot_four int, slot_five int,
+slot_six int, slot_seven int, slot_eight int,
+slot_nine int, slot_ten int,
+slot_eleven int, slot_twelve int,
+slot_thirteen int, slot_fourteen int
+); 
+
+
 
 insert into saved_game values (1, 'demo', 0);
+
 insert into player values (1, 0, 40, 0, 0, 0);
+insert into player values (1, 1, 40, 5, 0, 0);
+insert into player values (1, 2, 40, 5, 0, 0);
+insert into player values (1, 3, 40, 15, 1, 0);
+insert into player values (1, 4, 40, 40, 1, 0);
+insert into player values (1, 5, 40, 50, 2, 1);
+insert into player values (1, 6, 40, 60, 2, 2);
+insert into player values (1, 7, 40, 100, 2, 2);
+insert into player values (1, 8, 40, 115, 4, 3);
+insert into player values (1, 9, 40, 150, 4, 3);
+insert into player values (1, 10, 40, 180, 5, 5);
+
+insert into upgrade_level values(1, 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 2, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 3, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 4, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 5, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 7, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 8, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 9, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 10, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 11, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 12, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 13, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+insert into upgrade_level values(1, 14, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+
 
 commit; 
+
+
+        

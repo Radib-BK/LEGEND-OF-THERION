@@ -21,6 +21,8 @@ public class Entity
     public String state="alive";
     public int  max_hit_delay=50;
 
+    public boolean damagable=true;
+
 
 
 
@@ -41,6 +43,8 @@ public class Entity
 
     public Rectangle solidArea;
     public boolean collisonOn=false;
+
+    public boolean display=true;
 
     String dialogues[]= new String[20];
     int dialogue_index=0;

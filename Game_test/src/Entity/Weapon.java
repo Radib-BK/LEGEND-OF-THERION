@@ -22,6 +22,8 @@ public class Weapon extends Entity {
 
 
 
+
+
     public Weapon(GamePanel gp)
     {
         super(gp);

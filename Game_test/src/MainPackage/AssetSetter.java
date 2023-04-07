@@ -46,7 +46,12 @@ public class AssetSetter {
         gp.enemy[6][0]=new StoneGolem(gp);
         set_enemy_parameter(gp.enemy[6][0], 1000, 640, 100, 1500);
 
+        gp.enemy[8][0]=new FireDemon(gp);
+        set_enemy_parameter(gp.enemy[8][0], 700, 457, 100, 1500);
 
+
+        gp.enemy[10][0]=new Knight(gp);
+        set_enemy_parameter(gp.enemy[10][0], 700, 490, 100, 1500);
 
 
 
@@ -56,7 +61,7 @@ public class AssetSetter {
     {
         gp.obstacle[0][0]=new MovingTile(gp);
         set_enemy_parameter(gp.obstacle[0][0], 528, 500, 350, 800);
-
+        gp.obstacle[0][0].speed=2;
         gp.obstacle[0][1]=new MovingTile(gp);
         set_enemy_parameter(gp.obstacle[0][1], 790, 500, 350, 700);
         gp.obstacle[0][1].speed=2;

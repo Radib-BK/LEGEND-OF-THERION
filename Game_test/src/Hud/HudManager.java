@@ -22,12 +22,21 @@ public class HudManager  {
     Hud transform_start;
     Hud transform_end[];
 
-    BufferedImage coin, health_potion, transform_potion, game_over;
+    int charIndex=0;
+
+    String combined_text="";
+
+    BufferedImage coin, health_potion, transform_potion, game_over, restart, exit;
 
     public String currentDialogue="";
+    public String nextDialogue="";
+    public String speaker= " ";
 
-    public Font purisaB;
+    public Font purisaB, arneson, arnesonBold;
 
+    int current_slot=0;
+
+    int press_delay=50;
 
 
 
@@ -55,7 +64,11 @@ public class HudManager  {
             File is = new File("res/Font/Purisa Bold.ttf");
             purisaB= Font.createFont(Font.TRUETYPE_FONT, is);
 
+            is = new File("res/Font/Arneson.ttf");
+            arneson= Font.createFont(Font.TRUETYPE_FONT, is);
 
+            is = new File("res/Font/Arneson Bold.ttf");
+            arnesonBold= Font.createFont(Font.TRUETYPE_FONT, is);
 
 
         }
@@ -123,6 +136,8 @@ public class HudManager  {
             transform_potion= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/tile21.png"));
 
             game_over= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Hud/Game Over.png"));
+            restart= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Hud/restart.png"));
+            exit= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Hud/exit.png"));
 
 
 
@@ -360,7 +375,7 @@ public class HudManager  {
 
     public void frame2(Graphics2D g2, int x, int y, int width, int height, Color c1, Color c2, int border)
     {
-        GradientPaint gradient = new GradientPaint(x, y, new Color(255, 0, 102,   150), x + width, y + height, new Color(51, 0, 204, 150));
+        GradientPaint gradient = new GradientPaint(x, y, new Color(96, 26, 62,   150), x + width, y + height, new Color(44, 4, 29, 150));
         g2.setPaint(gradient);
         g2.fillRect(x, y, width, height);
 
@@ -372,6 +387,24 @@ public class HudManager  {
 
 
     }
+
+    public void frame3(Graphics2D g2, int x, int y, int width, int height, Color c1, Color c2, int border)
+    {
+        g2.setColor(new Color(204, 204, 204, 150));
+
+        g2.fillRect(x, y, width, height);
+
+        // Set border color and width
+        int border_width = border;
+
+        g2.setColor( new Color(96, 26, 62));
+        g2.setStroke(new BasicStroke(border_width));
+        g2.drawRect(x + border_width, y + border_width, width - border_width * 2, height - border_width * 2);
+
+
+    }
+
+
 
 
 
@@ -396,34 +429,132 @@ public class HudManager  {
 
         g2.drawImage(game_over, 540, 400, 603, 107, null);
 
+
+        g2.setColor(new Color(204, 204, 204, 150));
+        g2.fillRect(700, 550, 300, 75);
+
+        if(current_slot==0)
+            g2.drawRect(695, 545, 310, 85);
+
+        g2.drawImage(restart, 700, 550, 300, 75, null);
+
+        g2.setColor(new Color(204, 204, 204, 150));
+        g2.fillRect(700, 650, 300, 75);
+
+        if(current_slot==1)
+            g2.drawRect(695, 645, 310, 85);
+
+        g2.drawImage(exit, 700, 650, 300, 75, null);
+
     }
 
     public void drawDialogueScreen(Graphics2D g2)
     {
-        this.g2=g2;
-
-        int x=gp.tileSize*6;
-        int y=gp.tileSize*2;
-        int width= gp.screenWidth-(gp.tileSize*12);
-        int height= gp.tileSize*4;
 
         Color c1= new Color(0, 0, 0, 150);
         Color c2= new Color(255, 255, 255);
 
+        this.g2=g2;
+
+        frame3(g2, gp.tileSize*6-5, gp.tileSize*3-20, gp.tileSize*6-20, gp.tileSize+20, c1, c2, 4);
+        g2.setFont(arnesonBold);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 38F));
+        g2.drawString(speaker, gp.tileSize*6+10, gp.tileSize*3+25);
+
+        int x=gp.tileSize*6-5;
+        int y=gp.tileSize*4;
+        int width= gp.screenWidth-(gp.tileSize*12)+16;
+        int height= gp.tileSize*4;
+
+
+
         frame2(g2, x,y, width, height, c1, c2, 5);
 
-        x+= gp.tileSize;
+        x+= gp.tileSize-19;
         y+= gp.tileSize;
-        g2.setFont(purisaB);
+        g2.setFont(arneson);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));
         g2.setColor(Color.white);
 
-        for(String line: currentDialogue.split("\n"))
+        char character[]=currentDialogue.toCharArray();
+
+
+
+        if(charIndex<character.length)
+        {
+
+
+            String s= String.valueOf(character[charIndex]);
+
+            if(charIndex==0 && gp.dialogue.dialogue_index>0)
+            {
+                char characters[]=nextDialogue.toCharArray();
+
+                s=String.valueOf(characters[0]);
+            }
+
+            combined_text=combined_text+s;
+
+            charIndex++;
+
+        }
+
+
+
+        for(String line: combined_text.split("\n"))
         {
             g2.drawString(line, x, y);
             y+=40;
         }
+    }
+
+    public void upgradeGameOverScreen()
+    {
+        if(gp.keyH.upPressed==true && press_delay==0)
+        {
+            if(current_slot==1)
+                current_slot=0;
+            else
+                current_slot=1;
+
+            press_delay=10;
+        }
+        else if(gp.keyH.downPressed==true && press_delay==0)
+        {
+            if(current_slot==1)
+                current_slot=0;
+            else
+                current_slot=1;
+            press_delay=10;
+        }
+        else if(gp.keyH.enterPressed==true && press_delay==0)
+        {
+            if(current_slot==0)
+            {
+                gp.next_selected="load";
+
+            }
+            else
+            if(current_slot==1)
+            {
+                gp.titleScreen.press_delay=60;
+                gp.next_selected="title";
+            }
+        }
+
+        if(press_delay>0)
+            press_delay--;
+    }
+
+    public void draw_mid_screen_dialogue(Graphics2D g2)
+    {
+        g2.setFont(arnesonBold);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
+        g2.setColor( new Color(96, 26, 62));
+        g2.drawString(currentDialogue, 500, 400);
     }
 
 

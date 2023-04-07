@@ -119,6 +119,62 @@ public class CollisionChecker {
 
     }
 
+    public boolean dash_state_collison(Entity e)
+    {
+        int col=0;
+        int row=0;
+        int x=0;
+        int y=0;
+
+        Rectangle player_solid_area = new Rectangle(e.solidArea);
+
+        player_solid_area.x+=e.x;
+        player_solid_area.y+=e.y;
+
+
+
+        while(col<gp.MaxScreenCol && row< gp.MaxScreenRow)
+        {
+            int tileNum= gp.tileM.mapTileNum[gp.currentMap][col][row];
+
+
+            Rectangle object= new Rectangle();
+
+
+
+
+            if(gp.tileM.tile[tileNum].collison=="solid") {
+                object.x = x;
+                object.y = y;
+                object.width = gp.tileSize;
+                object.height = gp.tileSize;
+            }
+            if(player_solid_area.intersects(object)==true)
+            {
+                return true;
+            }
+
+
+
+            col++;
+            x+=gp.tileSize;
+
+            if(col==gp.MaxScreenCol)
+            {
+                col=0;
+                x=0;
+                row++;
+                y+=gp.tileSize;
+            }
+
+
+
+        }
+
+        return false;
+
+    }
+
     //overlaading for player bullet
     public void checkTile(Entity entity, String type)
     {
@@ -479,10 +535,15 @@ public class CollisionChecker {
 
         if(e1.can_get_hit<=0 &&  e2.can_get_hit<=0  &&  entity1.intersects(entity2))
         {
+            if(e1.damagable==true)
             e1.current_health -=e2.hit_damage;
+
+            if(e2.damagable==true)
             e2.current_health -=e1.hit_damage;
 
+            if(e1.damagable==true)
             e1.can_get_hit= e1.max_hit_delay;
+
             e2.can_get_hit=e2.max_hit_delay;
 
             e2.last_hit_time=e2.hp_bar_display_time;
@@ -522,11 +583,13 @@ public class CollisionChecker {
 
                 if(e.can_get_hit<=0 && entity.intersects(bullet))
                 {
+                    if(e.damagable==true)
                     e.current_health -= shooter.bullet[i].power;
 
                     if(shooter.bullet[i].destroyable==true)
                     shooter.bullet[i].visibility=false;
 
+                    if(e.damagable==true)
                     e.can_get_hit= e.max_hit_delay;
 
 

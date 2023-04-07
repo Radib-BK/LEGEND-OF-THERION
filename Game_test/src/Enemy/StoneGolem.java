@@ -45,7 +45,7 @@ public class StoneGolem extends Entity {
 
     String activity = "idle";
 
-    int activity_delay = 0;
+    int activity_delay = 120;
     int movement_delay = 100;
 
     int laser_shoot = 0;
@@ -1211,6 +1211,8 @@ public class StoneGolem extends Entity {
 
             g2.drawImage(current_image, ground.x, ground.y, gp.tileSize*5, gp.tileSize*5, null);
         }
+
+        //HEATH VAR
 
         double oneScale = (double) 615 / max_health;
         double hpBarValue = oneScale * current_health;

@@ -27,7 +27,7 @@ public class TileManager
 
 
 
-    public int max_tile_count=60;
+    public int max_tile_count=100;
 
     BufferedImage border;
 
@@ -42,7 +42,7 @@ public class TileManager
 
 
         getTileImage();
-        for(int i=0; i<=6; i++)
+        for(int i=0; i<=10; i++)
         loadMap(i);
 
 
@@ -60,9 +60,11 @@ public class TileManager
 
 
             background[4].image= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/background.png"));
-            background[0].image= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/winter_background.jpg"));
+            background[0].image= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/mountain-1.png"));
             background[1].image= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/winter_background.png"));
             background[2].image= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/mountain.jpg"));
+            background[7].image= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/cave-background.jpg"));
+            background[9].image= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/castle.png"));
 
 
             oldManHouse= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Tile/house.png"));
@@ -114,6 +116,36 @@ public class TileManager
             setup(51,"tile51", "death");
             setup(52,"tile52", "solid");
             setup(53,"tile53", "solid");
+            setup(59,"tile59", "solid");
+            setup(60,"tile60", "solid");
+            setup(61,"tile61", "solid");
+            setup(62,"tile62", "solid");
+            setup(63,"tile63", "solid");
+            setup(64,"tile64", "solid");
+            setup(65,"tile65", "solid");
+            setup(66,"tile66", "solid");
+            setup(67,"tile67", "solid");
+            setup(68,"tile68", "solid");
+            setup(69,"tile69", "solid");
+            setup(69,"tile69", "solid");
+            setup(70,"tile70", "solid");
+            setup(71,"tile71", "solid");
+            setup(72,"tile72", "solid");
+            setup(73,"tile73", "solid");
+            setup(74,"tile74", "solid");
+            setup(75,"tile75", "solid");
+            setup(76,"tile76", "solid");
+            setup(77,"tile77", "solid");
+            setup(78,"tile78", "solid");
+            setup(79,"tile79", "solid");
+            setup(80,"tile80", "solid");
+            setup(81,"tile81", "solid");
+            setup(82,"tile82", "solid");
+            setup(83,"tile83", "solid");
+            setup(84,"tile84", "solid");
+            setup(85,"tile85", "solid");
+            setup(86,"tile86", "solid");
+            setup(87,"tile87", "solid");
             //(52,"tile52", "solid");
 
 
@@ -165,6 +197,14 @@ public class TileManager
             map_dest= "/maps/map5.txt";
         else if(i==6)
             map_dest="/maps/map6.txt";
+        else if(i==7)
+            map_dest="/maps/map7.txt";
+        else if(i==8)
+            map_dest="/maps/map8.txt";
+        else if(i==9)
+            map_dest="/maps/map9.txt";
+        else if(i==10)
+            map_dest="/maps/map10.txt";
         try{
 
             InputStream is= getClass().getResourceAsStream(map_dest);
@@ -250,10 +290,10 @@ public class TileManager
         {
             g2.drawImage(background[1].image, 0 , 0, gp.screenWidth , gp.screenHeight, null);
 
-            if(gp.player.x<1085)
-                g2.drawImage(oldManHouse, 800 , 220, 600 , 500, null);
+            if(gp.old_man.old_man_house=="closed")
+                g2.drawImage(oldManHouse, 1170 , 220, 600 , 500, null);
             else
-                g2.drawImage(oldManHouseOpen, 800 , 220, 600 , 500, null);
+                g2.drawImage(oldManHouseOpen, 1170 , 220, 600 , 500, null);
         }
         else if(gp.currentMap==2 || gp.currentMap==3)
         {
@@ -264,8 +304,16 @@ public class TileManager
             g2.drawImage(background[4].image, 0, 0, gp.screenWidth / 2, gp.screenHeight, null);
             g2.drawImage(background[4].image, gp.screenWidth / 2, 0, gp.screenWidth / 2, gp.screenHeight, null);
 
-        }//        g2.drawImage(tile[1].image, 48, 0 , gp.tileSize, gp.tileSize, null);
-//        g2.drawImage(tile[2].image, 96, 0 , gp.tileSize, gp.tileSize, null);
+        }
+        else if(gp.currentMap==7 || gp.currentMap==8)
+        {
+            g2.drawImage(background[7].image, 0 , 0, gp.screenWidth , gp.screenHeight, null);
+        }
+
+        else if(gp.currentMap==9 || gp.currentMap==10)
+        {
+            g2.drawImage(background[9].image, 0 , 0, gp.screenWidth , gp.screenHeight, null);
+        }
 
     }
 

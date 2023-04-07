@@ -29,6 +29,8 @@ public class Player extends Entity {
 
     public String transformation_state;
 
+    public int dash_count=0;
+
     public int transform_potion_buff, transform_potion_duration, max_transform_potion_duration;
 
     public int transformation_animation=0;
@@ -39,10 +41,24 @@ public class Player extends Entity {
 
     public int key_press_delay=0;
 
+    int upgrade_level[]= new int[15];
+
+
+
 
 
     public BufferedImage fly_left_1, fly_right_1, fly_left_2, fly_right_2, fly_left_3, fly_right_3, fly_left_4, fly_right_4 ;
     public BufferedImage left_shoot, right_shoot, left_death, right_death;
+
+    public BufferedImage left_block, right_block;
+
+    public BufferedImage left_dash, right_dash;
+
+    public int bomb_radius=0, bomb_power=0;
+
+    public int max_shoot_delay=50;
+
+    int fall_factor=0;
 
     public BufferedImage ani0, ani1, ani2, ani3, ani4, ani5, ani6, ani7, ani8, ani9, ani10, ani11;
 
@@ -80,9 +96,11 @@ public class Player extends Entity {
 //        {
 //            gp.currentMap=gp.db.getSavedGame();
 //        }
-//        catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
+
+
+
+
+
 
         set_default_x_y();
 
@@ -94,46 +112,115 @@ public class Player extends Entity {
         transformation_state="normal";
         max_hit_delay=50;
 
-       coin_count=0;
+       coin_count=100;
         health_potion_count=0;
        boost_potion_count=0;
-       current_health =40;
 
-//        try
-//        {
-//            int arr[]=gp.db.getPlayer(gp);
-//
-//            current_health=arr[0];
-//            coin_count=arr[1];
-//            health_potion_count=arr[2];
-//            boost_potion_count=arr[3];
-//
-//
-//
-//        }
-//        catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
+       set_upgrade_level();
 
 
 
-        max_health =40;
+        try
+        {
+            int arr[]=gp.db.getPlayer(gp);
+
+            current_health=arr[0];
+            coin_count=arr[1];
+            health_potion_count=arr[2];
+            boost_potion_count=arr[3];
+
+            int arr2[]=gp.db.getUpgrade(gp);
+
+            for(int i=0; i<15; i++)
+                upgrade_level[i]=arr2[i];
+
+
+
+
+
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+        max_health =30;
+
 
         if(gp.currentMap<=3)
         player_max_transformation=0;
         else
-            player_max_transformation=400;
+            player_max_transformation=300;
         player_current_transformation=player_max_transformation;
-        hit_damage=10;
+        hit_damage=5;
         health_potion_buff=20;
 
-        transform_potion_buff=200;
+        transform_potion_buff=100;
         transform_potion_duration=0;
-        max_transform_potion_duration=1000;
+        max_transform_potion_duration=500;
 
         lifetime_max_charge=10;
 
         setPlayerBulletValues();
+
+        set_upgrade_level();
+        change_upgrade_level();
+
+
+
+        current_health=max_health;
+
+    }
+
+    public void set_upgrade_level()
+    {
+        for(int i=0; i<15; i++)
+            gp.upgradeScreen.icon[i].current_level=upgrade_level[i];
+    }
+
+    public void change_upgrade_level()
+    {
+        for(int i=0; i<15; i++)
+            upgrade_level[i]= gp.upgradeScreen.icon[i].current_level;
+
+        max_health= upgrade_level[0]*10+30;
+
+        if(current_health>=max_health)
+        current_health=max_health;
+
+        speed=upgrade_level[1]+2;
+
+        max_shoot_delay=50-upgrade_level[2]*7;
+
+        for(int i=0; i<lifetime_max_charge; i++)
+            bullet[i].speed=4+upgrade_level[3];
+
+        health_potion_buff=20+upgrade_level[4]*10;
+        transform_potion_buff=100+upgrade_level[5]*100;
+
+        if(gp.currentMap<=3)
+            player_max_transformation=0;
+        else
+        player_max_transformation=300+upgrade_level[6]*100;
+player_current_transformation=player_max_transformation;
+        hit_damage= 5*upgrade_level[7]+5;
+
+
+        for(int i=0; i<lifetime_max_charge; i++)
+            bullet[i].power=5+upgrade_level[8]*2;
+
+        bomb_power=0;
+        bomb_radius=0;
+
+        max_transform_potion_duration=upgrade_level[10]*200+500;
+
+        fall_factor=upgrade_level[12]*10;
+
+
+        max_hit_delay=50+upgrade_level[13]*10;
+
+
 
 
 
@@ -160,6 +247,18 @@ public class Player extends Entity {
 
         player_default_start_x[6]=40;
         player_default_start_y[6]=730;
+
+        player_default_start_x[7]=40;
+        player_default_start_y[7]=630+48;
+
+        player_default_start_x[9]=40;
+        player_default_start_y[9]=630+48;
+
+        player_default_start_x[10]=40;
+        player_default_start_y[10]=630+48;
+
+        player_default_start_x[8]=40;
+        player_default_start_y[8]=290;
     }
 
     public void set_default_x_y()
@@ -198,6 +297,12 @@ public class Player extends Entity {
 
             left_death= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Player/die/left.png"));
             right_death =ImageIO.read(getClass().getClassLoader().getResourceAsStream("Player/die/right.png"));
+
+            left_block= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Player/transformation/block/left.png"));
+            right_block =ImageIO.read(getClass().getClassLoader().getResourceAsStream("Player/transformation/block/right.png"));
+
+            left_dash= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Player/transformation/dash/left.png"));
+            right_dash= ImageIO.read(getClass().getClassLoader().getResourceAsStream("Player/transformation/dash/right.png"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -396,10 +501,7 @@ public class Player extends Entity {
 
     }
 
-    public void interactNPC(int i)
-    {
 
-    }
 
     public void update() {
 
@@ -413,17 +515,25 @@ public class Player extends Entity {
             move_player_bullet();
 
 
+            if(transformation_state=="block" || transformation_state=="dash")
+                damagable=false;
+            else
+                damagable=true;
 
 
             if (transformation_state == "normal")
                 normal_state_logic();
             else if (transformation_state == "fly")
                 fly_state_logic();
+            else if(transformation_state=="block")
+                block_state_logic();
+            else if(transformation_state=="dash")
+                dash_state_logic();
 
             if(key_press_delay>0)
                 key_press_delay--;
 
-            System.out.println(key_press_delay);
+
 
 
             //------CHECK OBJECT COLLISON------//
@@ -468,6 +578,175 @@ public class Player extends Entity {
 
         }
 
+    }
+
+    public void dash_state_logic()
+    {
+
+        if(direction=="left")
+        {
+            for(int i=0; i<2; i++)
+            {
+                if(x > speed) {
+                    x -= 7;
+
+                    boolean is_obstacle = gp.cChecker.dash_state_collison(this);
+
+                    if ( is_obstacle == true)
+                        x += 7;
+
+                }
+
+
+            }
+        }
+        else if(direction=="right")
+        {
+            for(int i=0; i<2; i++)
+            {
+                if( x < gp.screenWidth - gp.tileSize * 2 - speed) {
+                    x += 7;
+
+
+
+
+                    boolean is_obstacle = gp.cChecker.dash_state_collison(this);
+
+                    if (is_obstacle == true)
+                        x -= 7;
+
+
+                }
+
+            }
+        }
+
+        if ((keyH.onePressed &&  transformation_animation == 0 && key_press_delay==0)) {
+            transformation_state = "normal";
+            transformation_animation = 1;
+            spriteNum = 0;
+
+            key_press_delay=15;
+
+
+        }
+
+        else if (keyH.twoPressed && gp.currentMap>=4 && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+            transformation_state = "fly";
+            transformation_animation = 1;
+            spriteNum = 1;
+            final_fall_height = 0;
+            fall_height = 0;
+            key_press_delay=15;
+
+
+        }
+        else if (keyH.threePressed && gp.currentMap>=7 && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+            transformation_state = "block";
+            transformation_animation = 1;
+            damagable=false;
+            spriteNum = 1;
+            final_fall_height = 0;
+            fall_height = 0;
+            key_press_delay=15;
+
+
+        }
+
+        dash_count++;
+
+        if ( dash_count>=20 || player_current_transformation <= 0 || current_health <= 0) {
+            transformation_state = "normal";
+            transformation_animation = 1;
+            spriteNum = 0;
+            dash_count=0;
+
+        }
+
+        player_current_transformation-=8;
+
+
+    }
+
+    public void block_state_logic()
+    {
+
+
+        if ((keyH.onePressed && transformation_animation == 0 && key_press_delay==0)) {
+            transformation_state = "normal";
+            transformation_animation = 1;
+            spriteNum = 0;
+
+            key_press_delay=15;
+            damagable=true;
+
+
+        }
+        else if (keyH.twoPressed && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+            transformation_state = "fly";
+            transformation_animation = 1;
+            spriteNum = 1;
+            final_fall_height = 0;
+            fall_height = 0;
+            key_press_delay=15;
+            damagable=true;
+
+
+        }
+        else if (keyH.fourPressed && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+            transformation_state = "dash";
+            transformation_animation = 1;
+            spriteNum = 1;
+            final_fall_height = 0;
+            fall_height = 0;
+            key_press_delay=15;
+            damagable=false;
+
+
+        }
+
+
+        for (int i = 0; i < 2; i++) {
+            move_direction = "down";
+
+            int fall_speed = 4;
+
+            y += fall_speed;
+
+            collisonOn = false;
+
+            gp.cChecker.checkTile(this);
+            boolean is_obstacle= gp.cChecker.player_obstacle_collison_check();
+
+            if (collisonOn == true || is_obstacle==true) {
+                y -= fall_speed;
+
+
+
+
+
+
+            }
+
+            //it needs to be inside the for loop
+
+
+
+            }
+
+
+        if (player_current_transformation <= 0 || current_health <= 0) {
+            transformation_state = "normal";
+            transformation_animation = 1;
+            spriteNum = 0;
+
+        }
+
+        //Do that will always be done
+
+
+        //if not in other state, increase transformation duration
+        player_current_transformation-=2;
     }
 
     public void normal_state_logic()
@@ -529,7 +808,7 @@ public class Player extends Entity {
             }
 
 
-        } else if (keyH.onePressed && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+        } else if (keyH.twoPressed && gp.currentMap>=4 && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
             transformation_state = "fly";
             transformation_animation = 1;
             spriteNum = 1;
@@ -538,8 +817,31 @@ public class Player extends Entity {
             key_press_delay=15;
 
 
-        } else if (keyH.spacePressed && shoot_delay == 0) {
-            shoot_delay = 1;
+        }
+        else if (keyH.threePressed && gp.currentMap>=7 && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+            transformation_state = "block";
+            transformation_animation = 1;
+            damagable=false;
+            spriteNum = 1;
+            final_fall_height = 0;
+            fall_height = 0;
+            key_press_delay=15;
+
+
+        }
+        else if (keyH.fourPressed && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+            transformation_state = "dash";
+            transformation_animation = 1;
+            spriteNum = 1;
+            final_fall_height = 0;
+            fall_height = 0;
+            key_press_delay=15;
+            damagable=false;
+
+
+        }
+        else if (keyH.spacePressed &&  shoot_delay == 0  && (gp.currentMap>=2 || gp.dialogue.level1_dialogue_state=="finished") ) {
+            shoot_delay = max_shoot_delay;
             spriteNum = 5;
             shoot_player_bullet();
         } else if (keyH.H_Pressed && current_health != max_health && health_potion_count > 0) {
@@ -559,11 +861,13 @@ public class Player extends Entity {
         } else {
 
             if (shoot_delay > 0)
-                shoot_delay = (++shoot_delay) % 40;
+                shoot_delay--;
+
+            if(shoot_delay<=max_shoot_delay-15)
+                spriteNum=0;
             //this condition is used to hold shoot animation for a while
 
-            if (shoot_delay == 0 || shoot_delay > 20)
-                spriteNum = 0;
+
 
 
         }
@@ -627,14 +931,14 @@ public class Player extends Entity {
             if (final_fall_height > 0) {
 
 
-                if (final_fall_height < 65) {
+                if (final_fall_height < 65+fall_factor) {
                     //no damage
                 } else {
                     can_get_hit = max_hit_delay;
 
-                    if (final_fall_height < 90)
+                    if (final_fall_height < 90+fall_factor)
                         current_health -= 5;
-                    else if (final_fall_height < 115)
+                    else if (final_fall_height < 115+fall_factor)
                         current_health -= 20;
                     else
                         current_health = 0;
@@ -707,12 +1011,35 @@ public class Player extends Entity {
             }
 
 
-        } else if ((keyH.onePressed && transformation_animation == 0 && key_press_delay==0)) {
+        } else if ((keyH.onePressed &&  transformation_animation == 0 && key_press_delay==0)) {
             transformation_state = "normal";
             transformation_animation = 1;
             spriteNum = 0;
-            solidArea = new Rectangle(15, 15, gp.tileSize * 2 - 30, gp.tileSize * 2 - 30);
+
             key_press_delay=15;
+
+
+        }
+
+        else if (keyH.threePressed &&  gp.currentMap>=9 && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+            transformation_state = "block";
+            transformation_animation = 1;
+            damagable=false;
+            spriteNum = 1;
+            final_fall_height = 0;
+            fall_height = 0;
+            key_press_delay=15;
+
+
+        }
+        else if (keyH.fourPressed && transformation_animation == 0 && player_current_transformation > 80 && key_press_delay==0) {
+            transformation_state = "dash";
+            transformation_animation = 1;
+            spriteNum = 1;
+            final_fall_height = 0;
+            fall_height = 0;
+            key_press_delay=15;
+            damagable=false;
 
 
         }
@@ -736,10 +1063,19 @@ public class Player extends Entity {
     {
         if(x >= gp.screenWidth - gp.tileSize * 3 - speed)
         {
-            if(gp.currentMap==0)
+            if(gp.currentMap<=10)
             {
-                gp.currentMap=1;
-                x=50;
+
+
+                gp.currentMap++;
+                set_default_x_y();
+            }
+
+            if(gp.game_state==gp.playState)
+            {
+                gp.db.setSavedGame(gp);
+                gp.db.setPlayer(gp);
+                gp.db.setUpgrade(gp, upgrade_level);
             }
 
 //            gp.db.setPlayer(gp);
@@ -841,6 +1177,20 @@ public class Player extends Entity {
             }
 
         }
+        else if(transformation_state=="block")
+         {
+             if(direction=="left")
+                 image=left_block;
+             else
+                 image=right_block;
+         }
+         else if(transformation_state=="dash")
+         {
+             if(direction=="left")
+                 image=left_dash;
+             else
+                 image=right_dash;
+         }
 
 
     if(spriteNum==6)
@@ -860,7 +1210,17 @@ public class Player extends Entity {
 
 {
     if((transformation_animation==0 || transformation_animation>2) && can_get_hit%2==0 )
+    {
+        if(transformation_state!="dash")
         g2.drawImage(image, x, y, gp.tileSize*2, gp.tileSize*2, null); //which image, x, y, height, width, convention
+    else
+        {
+            if(direction=="left")
+            g2.drawImage(image, x, y-gp.tileSize, gp.tileSize*3, gp.tileSize*3, null); //which image, x, y, height, width, convention
+        else  if(direction=="right")
+                g2.drawImage(image, x-gp.tileSize, y-gp.tileSize, gp.tileSize*3, gp.tileSize*3, null);
+        }
+    }
 }
 
         //------------------------------------------------
